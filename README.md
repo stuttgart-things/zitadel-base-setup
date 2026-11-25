@@ -62,9 +62,11 @@ tflint --init && tflint --recursive
 ```
 
 CI ([`.github/workflows/validate.yaml`](.github/workflows/validate.yaml)) runs
-on every PR: fmt, validate and `test` with OpenTofu **and** Terraform (1.11.0
-and latest), tflint, a Trivy config scan (HIGH/CRITICAL) and the env-values
-check.
+on every PR through the org's templates (github-workflow-templates, each job
+in a container image): fmt, validate and `test` with Terraform 1.11.0 (the
+floor `org-users` declares), tflint, a Trivy config scan (HIGH/CRITICAL) and
+the env-values check. OpenTofu is not in CI; run the commands above with
+`tofu` locally before a release.
 
 The tests in `modules/*/tests` pin the defaults a root relies on (app type,
 flows, token types, role check, verified emails). A failing test after a
