@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: detect-private-key
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+  - repo: local
+    hooks:
+      - id: no-env-values
+        name: no environment-specific values
+        entry: scripts/check-env-values.sh
+        language: script
+        pass_filenames: false
+      - id: tofu-fmt
+        name: tofu/terraform fmt
+        entry: sh -c 'if command -v tofu >/dev/null; then tofu fmt -check -recursive -diff; else terraform fmt -check -recursive -diff; fi'
+        language: system
+        pass_filenames: false
+        files: \.(tf|tftest\.hcl)$

@@ -1,0 +1,61 @@
+---
+# The org's terraform templates (github-workflow-templates), as in
+# vault-base-setup: each runs in a container image (hashicorp/terraform,
+# tflint, trivy), so no setup-* action outside the org's allow list.
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # init + fmt -check + validate, and tflint, per module and the example.
+  validate:
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: [modules/org-users, modules/oidc-project, examples/lab]
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-validate-terraform.yaml@main
+    with:
+      runs-on: ubuntu-latest
+      environment-name: k8s
+      # 1.11 is the floor org-users declares.
+      terraform-version: 1.11.0
+      tflint-version: v0.66.0
+      working-directory: ${{ matrix.dir }}
+      fmt-check: true
+      continue-error: false
+
+  # Offline tests (mocked provider).
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: [modules/org-users, modules/oidc-project]
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-test.yaml@main
+    with:
+      runs-on: ubuntu-latest
+      environment-name: k8s
+      terraform-version: 1.11.0
+      working-directory: ${{ matrix.dir }}
+      continue-error: false
+
+  security:
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-security.yaml@main
+    with:
+      runs-on: ubuntu-latest
+      environment-name: k8s
+      severity: HIGH,CRITICAL
+      continue-error: false
+
+  # The modules are generic; domains, URLs and users of a real environment
+  # belong to the consuming root (scripts/check-env-values.sh).
+  env-values:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: scripts/check-env-values.sh
