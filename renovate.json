@@ -11,10 +11,21 @@
     {
       "customType": "regex",
       "description": "Tool versions pinned in the CI workflow",
-      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+\\S+:\\s*\"?(?<currentValue>[^\"\\s]+)\"?"
       ]
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "A templates release arrives as one PR for all workflows (github-workflow-templates#235)",
+      "matchPackageNames": [
+        "stuttgart-things/github-workflow-templates"
+      ],
+      "groupName": "github-workflow-templates"
     }
   ]
 }
