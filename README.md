@@ -9,6 +9,7 @@ roles come from the consuming root, the modules hold no environment values.
 |---|---|---|
 | [`modules/org-users`](modules/org-users) | org lookup + human users | [README](modules/org-users/README.md) |
 | [`modules/oidc-project`](modules/oidc-project) | project, roles, OIDC apps, user grants, machine users | [README](modules/oidc-project/README.md) |
+| [`modules/oidc-app`](modules/oidc-app) | one OIDC app in an existing project (per-cluster clients from automation) | [README](modules/oidc-app/README.md) |
 
 ## Usage
 
@@ -41,7 +42,7 @@ client ID and secret, and every login that uses it breaks.
 
 | | |
 |---|---|
-| Terraform / OpenTofu | `>= 1.11` for `org-users` (write-only `initial_password`), `>= 1.5` for `oidc-project` |
+| Terraform / OpenTofu | `>= 1.11` for `org-users` (write-only `initial_password`), `>= 1.5` for `oidc-project` and `oidc-app` |
 | Provider | `zitadel/zitadel ~> 3.0` |
 
 ## Releases

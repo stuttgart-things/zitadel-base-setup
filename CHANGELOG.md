@@ -2,8 +2,11 @@
 
 ## Unreleased
 
-CI and metadata only; the modules are unchanged, so no release is needed.
-
+- New module `modules/oidc-app`: one OIDC app in an existing project,
+  looked up by ID or exact name (the plan fails unless exactly one project
+  matches). For automation that owns a single client, e.g. one per cluster,
+  while the project stays with `oidc-project`. Same app defaults as
+  `oidc-project`, pinned by tests. The existing modules are unchanged.
 - Renovate tracks the tflint version in the CI workflow. The regex manager
   in `renovate.json` matched nothing before: the workflow had no
   `# renovate:` comment. The Terraform version stays the declared floor and

@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: [modules/org-users, modules/oidc-project, examples/lab]
+        dir: [modules/org-users, modules/oidc-project, modules/oidc-app, examples/lab]
     uses: stuttgart-things/github-workflow-templates/.github/workflows/call-validate-terraform.yaml@main
     with:
       runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dir: [modules/org-users, modules/oidc-project]
+        dir: [modules/org-users, modules/oidc-project, modules/oidc-app]
     uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-test.yaml@main
     with:
       runs-on: ubuntu-latest
