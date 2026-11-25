@@ -46,7 +46,7 @@ run "web_app_defaults_by_id" {
     error_message = "dev_mode off and OIDC 1.0 by default."
   }
   assert {
-    condition     = length(data.zitadel_orgs.org) == 0 && length(data.zitadel_projects.project) == 0
+    condition     = length(data.zitadel_orgs.by_name) == 0 && length(data.zitadel_projects.by_name) == 0
     error_message = "No lookup when both IDs are given."
   }
 }
@@ -59,11 +59,11 @@ run "lookup_by_name" {
   }
 
   override_data {
-    target = data.zitadel_orgs.org
+    target = data.zitadel_orgs.by_name
     values = { ids = ["org-looked-up"] }
   }
   override_data {
-    target = data.zitadel_projects.project
+    target = data.zitadel_projects.by_name
     values = { project_ids = ["project-looked-up"] }
   }
 
@@ -72,7 +72,7 @@ run "lookup_by_name" {
     error_message = "Org and project must come from the lookups."
   }
   assert {
-    condition     = data.zitadel_projects.project[0].name_method == "TEXT_QUERY_METHOD_EQUALS"
+    condition     = data.zitadel_projects.by_name[0].name_method == "TEXT_QUERY_METHOD_EQUALS"
     error_message = "The project lookup must match the name exactly."
   }
 }
@@ -132,7 +132,7 @@ run "ambiguous_project_fails" {
   }
 
   override_data {
-    target = data.zitadel_projects.project
+    target = data.zitadel_projects.by_name
     values = { project_ids = ["p-1", "p-2"] }
   }
 
@@ -148,7 +148,7 @@ run "missing_project_fails" {
   }
 
   override_data {
-    target = data.zitadel_projects.project
+    target = data.zitadel_projects.by_name
     values = { project_ids = [] }
   }
 

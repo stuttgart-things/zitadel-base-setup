@@ -4,23 +4,23 @@
 # oidc-project is the module that owns a project and all its apps.
 
 locals {
-  org_id = var.org_id != null ? var.org_id : data.zitadel_orgs.org[0].ids[0]
+  org_id = var.org_id != null ? var.org_id : data.zitadel_orgs.by_name[0].ids[0]
 
   project_ids = (
     var.project_id != null ? [var.project_id] :
-    var.project_name != null ? data.zitadel_projects.project[0].project_ids : []
+    var.project_name != null ? data.zitadel_projects.by_name[0].project_ids : []
   )
   # null when the lookup is not unique; the precondition below names why.
   project_id = length(local.project_ids) == 1 ? local.project_ids[0] : null
 }
 
-data "zitadel_orgs" "org" {
+data "zitadel_orgs" "by_name" {
   count       = var.org_id == null ? 1 : 0
   name        = var.org_name
   name_method = "TEXT_QUERY_METHOD_EQUALS"
 }
 
-data "zitadel_projects" "project" {
+data "zitadel_projects" "by_name" {
   count       = var.project_id == null && var.project_name != null ? 1 : 0
   org_id      = local.org_id
   name        = var.project_name
