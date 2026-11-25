@@ -9,9 +9,8 @@ locals {
 
 # role_check: ZITADEL refuses the login of a user without a role on this
 # project, before the app ever sees a token. role_assertion: the roles are put
-# into the tokens (urn:zitadel:iam:org:project:roles), where every app of the
-# lab roots reads them (portal groups, Backstage's zitadelProjectRoles
-# resolver, claim-machinery-api's identity, Vault's bound_claims).
+# into the tokens (urn:zitadel:iam:org:project:roles), where the apps read
+# them (group mapping, authorization, Vault's bound_claims).
 resource "zitadel_project" "project" {
   org_id                   = var.org_id
   name                     = var.project_name
@@ -46,8 +45,7 @@ resource "zitadel_project_role" "role" {
 # defaults are those of a confidential web client running the code flow
 # server side (basic auth, roles + profile in the ID token); a native or
 # token-option variant overrides single fields. Attributes left null are
-# omitted, exactly as before the consolidation (stuttgart-things/stuttgart-things#4612), so the provider keeps
-# its own defaults for them.
+# omitted, so the provider keeps its own defaults for them.
 resource "zitadel_application_oidc" "app" {
   for_each = var.apps
 
@@ -84,8 +82,8 @@ resource "zitadel_user_grant" "user" {
 
 # Machine users for callers without a human (workflows, services): client
 # credentials (with_secret). Access token type JWT by default -- the
-# default Bearer type of ZITADEL is opaque, and e.g. claim-machinery-api only
-# verifies JWTs.
+# default Bearer type of ZITADEL is opaque, and an API that validates tokens
+# locally only verifies JWTs.
 resource "zitadel_machine_user" "machine" {
   for_each = var.machine_users
 

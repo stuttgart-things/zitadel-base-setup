@@ -5,7 +5,7 @@ variable "org_id" {
 
 variable "project_name" {
   type        = string
-  description = "Name of the ZITADEL project, e.g. sthings-portal, sthings-backstage, vault."
+  description = "Name of the ZITADEL project, e.g. portal, backstage, vault."
 }
 
 variable "project_role_assertion" {

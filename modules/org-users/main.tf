@@ -18,7 +18,7 @@ resource "zitadel_human_user" "user" {
   first_name = each.value.first_name
   last_name  = each.value.last_name
   email      = each.value.email
-  # No mail server in the lab: an unverified address would send the user into
+  # Assumes no mail server: an unverified address would send the user into
   # a verification step that never arrives.
   is_email_verified = true
 
