@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         dir: [modules/org-users, modules/oidc-project, examples/lab]
-    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-validate-terraform.yaml@main
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-validate-terraform.yaml@15bb803fd72658fda50120f8a566d5594061e6ee # v1.2.0
     with:
       runs-on: ubuntu-latest
       environment-name: k8s
@@ -38,7 +38,7 @@ jobs:
       fail-fast: false
       matrix:
         dir: [modules/org-users, modules/oidc-project]
-    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-test.yaml@main
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-test.yaml@15bb803fd72658fda50120f8a566d5594061e6ee # v1.2.0
     with:
       runs-on: ubuntu-latest
       environment-name: k8s
@@ -47,7 +47,7 @@ jobs:
       continue-error: false
 
   security:
-    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-security.yaml@main
+    uses: stuttgart-things/github-workflow-templates/.github/workflows/call-terraform-security.yaml@15bb803fd72658fda50120f8a566d5594061e6ee # v1.2.0
     with:
       runs-on: ubuntu-latest
       environment-name: k8s
