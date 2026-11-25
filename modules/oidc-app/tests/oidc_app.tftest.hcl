@@ -93,6 +93,36 @@ run "public_client" {
   }
 }
 
+run "null_means_default" {
+  command = plan
+
+  variables {
+    org_id                      = "org-1"
+    project_id                  = "project-1"
+    app_type                    = null
+    auth_method_type            = null
+    grant_types                 = null
+    response_types              = null
+    access_token_type           = null
+    id_token_role_assertion     = null
+    id_token_userinfo_assertion = null
+    dev_mode                    = null
+  }
+
+  assert {
+    condition     = zitadel_application_oidc.app.app_type == "OIDC_APP_TYPE_WEB" && zitadel_application_oidc.app.auth_method_type == "OIDC_AUTH_METHOD_TYPE_BASIC"
+    error_message = "null must fall back to the default, not unset the attribute."
+  }
+  assert {
+    condition     = tolist(zitadel_application_oidc.app.grant_types) == tolist(["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]) && zitadel_application_oidc.app.access_token_type == "OIDC_TOKEN_TYPE_BEARER"
+    error_message = "null must fall back to the default flow and token type."
+  }
+  assert {
+    condition     = zitadel_application_oidc.app.id_token_role_assertion && zitadel_application_oidc.app.id_token_userinfo_assertion && zitadel_application_oidc.app.dev_mode == false
+    error_message = "null must fall back to the default assertions and dev_mode."
+  }
+}
+
 run "ambiguous_project_fails" {
   command = plan
 

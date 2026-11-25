@@ -51,6 +51,10 @@ A public client (browser PKCE, native) sets `app_type`
 The defaults are the same as those of an app in `oidc-project`, and the tests
 pin them, so an app described in one module plans the same in the other.
 
+`null` for an input with a default means *use the default* (`nullable =
+false`), so a caller that forwards optional fields can pass `null` instead of
+restating the defaults.
+
 ## Outputs
 
 | Output | |

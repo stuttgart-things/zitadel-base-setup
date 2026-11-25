@@ -13,6 +13,7 @@ variable "org_name" {
   type        = string
   description = "Organization to look up when var.org_id is null. ZITADEL's first org is called ZITADEL."
   default     = "ZITADEL"
+  nullable    = false
 }
 
 variable "project_id" {
@@ -43,39 +44,50 @@ variable "post_logout_redirect_uris" {
   default     = null
 }
 
+# null for any of the variables below means "use the default"
+# (nullable = false), so a caller that forwards optional fields -- a Crossplane
+# Workspace, a map of optional attributes -- can pass null instead of restating
+# the defaults.
+#
 # The defaults below are those of oidc-project's apps (a confidential web
 # client, code flow, basic auth). Keep them identical: an app moved between
 # the two modules must not change. tests/ pins both.
 
 variable "app_type" {
-  type    = string
-  default = "OIDC_APP_TYPE_WEB"
+  type     = string
+  default  = "OIDC_APP_TYPE_WEB"
+  nullable = false
 }
 
 variable "response_types" {
-  type    = list(string)
-  default = ["OIDC_RESPONSE_TYPE_CODE"]
+  type     = list(string)
+  default  = ["OIDC_RESPONSE_TYPE_CODE"]
+  nullable = false
 }
 
 variable "grant_types" {
-  type    = list(string)
-  default = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
+  type     = list(string)
+  default  = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"]
+  nullable = false
 }
 
 variable "auth_method_type" {
   type        = string
   description = "OIDC_AUTH_METHOD_TYPE_BASIC for a confidential client; OIDC_AUTH_METHOD_TYPE_NONE for a public one (native, user agent + PKCE), which gets no secret."
   default     = "OIDC_AUTH_METHOD_TYPE_BASIC"
+  nullable    = false
 }
 
 variable "dev_mode" {
-  type    = bool
-  default = false
+  type     = bool
+  default  = false
+  nullable = false
 }
 
 variable "access_token_type" {
-  type    = string
-  default = "OIDC_TOKEN_TYPE_BEARER"
+  type     = string
+  default  = "OIDC_TOKEN_TYPE_BEARER"
+  nullable = false
 }
 
 variable "access_token_role_assertion" {
@@ -85,11 +97,13 @@ variable "access_token_role_assertion" {
 }
 
 variable "id_token_role_assertion" {
-  type    = bool
-  default = true
+  type     = bool
+  default  = true
+  nullable = false
 }
 
 variable "id_token_userinfo_assertion" {
-  type    = bool
-  default = true
+  type     = bool
+  default  = true
+  nullable = false
 }
