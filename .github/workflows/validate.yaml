@@ -12,26 +12,76 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: opentofu/setup-opentofu@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
         with:
           tofu_version: 1.11.0
+          tofu_wrapper: false
       - run: tofu fmt -check -recursive -diff
 
-  validate:
+  # The modules are generic; domains, URLs and users of a real environment
+  # belong to the consuming root (scripts/check-env-values.sh).
+  env-values:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: scripts/check-env-values.sh
+
+  # validate + offline tests (mocked provider) with both binaries the roots
+  # use: 1.11 is the floor org-users declares, latest catches new breakage.
+  validate-test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        dir: [modules/org-users, modules/oidc-project, examples/lab]
-        # 1.11.0 is the floor org-users declares; latest catches new breakage.
-        tofu: [1.11.0, latest]
+        tool: [tofu, terraform]
+        version: ["1.11.0", latest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: opentofu/setup-opentofu@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - if: matrix.tool == 'tofu'
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2.0.2
         with:
-          tofu_version: ${{ matrix.tofu }}
-      - run: tofu init -backend=false -input=false
-        working-directory: ${{ matrix.dir }}
-      - run: tofu validate
-        working-directory: ${{ matrix.dir }}
+          tofu_version: ${{ matrix.version }}
+          tofu_wrapper: false
+      - if: matrix.tool == 'terraform'
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ matrix.version }}
+          terraform_wrapper: false
+      - name: validate
+        env:
+          TOOL: ${{ matrix.tool }}
+        run: |
+          for d in modules/org-users modules/oidc-project examples/lab; do
+            echo "::group::$TOOL validate $d"
+            (cd "$d" && "$TOOL" init -backend=false -input=false && "$TOOL" validate)
+            echo "::endgroup::"
+          done
+      - name: test
+        env:
+          TOOL: ${{ matrix.tool }}
+        run: |
+          for d in modules/org-users modules/oidc-project; do
+            echo "::group::$TOOL test $d"
+            (cd "$d" && "$TOOL" test)
+            echo "::endgroup::"
+          done
+
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: terraform-linters/setup-tflint@6ffdbaa3be476b3431f7275c26966ef32ff60337 # v6.3.2
+        with:
+          # renovate: datasource=github-releases depName=terraform-linters/tflint
+          tflint_version: v0.66.0
+      - run: tflint --init --config "$GITHUB_WORKSPACE/.tflint.hcl"
+      - run: tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl"
+
+  trivy:
+    runs-on: ubuntu-latest
+    container:
+      image: aquasec/trivy:0.76.2
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: trivy config --severity HIGH,CRITICAL --exit-code 1 .

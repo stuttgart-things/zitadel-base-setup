@@ -54,11 +54,24 @@ does before it plans it.
 ## Development
 
 ```bash
+pre-commit install                     # fmt, secrets, scripts/check-env-values.sh
 tofu fmt -check -recursive
 for d in modules/* examples/*; do (cd "$d" && tofu init -backend=false && tofu validate); done
+for d in modules/*; do (cd "$d" && tofu test); done   # offline, mocked provider
+tflint --init && tflint --recursive
 ```
 
-CI runs the same on every PR ([`.github/workflows/validate.yaml`](.github/workflows/validate.yaml)).
-Keep environment-specific values (domains, URLs, user names, role catalogs)
-out of this repository, including its docs and examples: they belong to the
-consuming root. Examples use `example.com`.
+CI ([`.github/workflows/validate.yaml`](.github/workflows/validate.yaml)) runs
+on every PR: fmt, validate and `test` with OpenTofu **and** Terraform (1.11.0
+and latest), tflint, a Trivy config scan (HIGH/CRITICAL) and the env-values
+check.
+
+The tests in `modules/*/tests` pin the defaults a root relies on (app type,
+flows, token types, role check, verified emails). A failing test after a
+change means existing roots would see a plan diff: either keep the default or
+make it a minor release with a CHANGELOG entry.
+
+Keep environment-specific values (domains, URLs, user names, role catalogs,
+paths of consuming repos) out of this repository, including docs and
+examples: they belong to the consuming root. Examples use `example.com`;
+`scripts/check-env-values.sh` enforces it.

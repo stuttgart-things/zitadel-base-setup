@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: zitadel-base-setup
+  description: Terraform/OpenTofu modules for the base setup of a ZITADEL instance (org users, OIDC projects)
+  annotations:
+    github.com/project-slug: stuttgart-things/zitadel-base-setup
+  tags:
+    - terraform
+    - opentofu
+    - zitadel
+    - oidc
+spec:
+  type: library
+  lifecycle: production
+  owner: stuttgart-things
