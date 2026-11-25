@@ -23,8 +23,10 @@ jobs:
     with:
       runs-on: ubuntu-latest
       environment-name: k8s
-      # 1.11 is the floor org-users declares.
+      # 1.11 is the floor org-users declares. Deliberately NOT tracked by
+      # Renovate: CI must prove the floor still works, not the newest release.
       terraform-version: 1.11.0
+      # renovate: datasource=github-releases depName=terraform-linters/tflint
       tflint-version: v0.66.0
       working-directory: ${{ matrix.dir }}
       fmt-check: true
