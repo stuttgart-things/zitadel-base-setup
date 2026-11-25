@@ -13,9 +13,11 @@ terraform {
 }
 
 provider "zitadel" {
-  domain           = var.zitadel_domain
-  insecure         = false
-  port             = "443"
+  domain = var.zitadel_domain
+  # No `port`: an explicit 443 makes the provider expect the issuer
+  # "https://<domain>:443", while ZITADEL's discovery document reports
+  # "https://<domain>" -> "issuer does not match". No `insecure` either: it
+  # means plain http, not "skip TLS verification".
   jwt_profile_file = var.jwt_profile_file
 }
 
