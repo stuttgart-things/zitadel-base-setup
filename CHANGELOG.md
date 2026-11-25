@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 (2026-11-25)
 
 - New module `modules/oidc-app`: one OIDC app in an existing project,
   looked up by ID or exact name (the plan fails unless exactly one project
@@ -11,6 +11,8 @@
   in `renovate.json` matched nothing before: the workflow had no
   `# renovate:` comment. The Terraform version stays the declared floor and
   is not tracked on purpose.
+- CI pins `github-workflow-templates` to v1.2.0 by commit SHA instead of
+  following `@main`.
 
 ## v0.1.0 (2026-11-25)
 
